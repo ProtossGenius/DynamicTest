@@ -19,10 +19,11 @@ namespace smdtest{
 			virtual void Do(User& usr) = 0;
 			virtual bool Filter(void* pkg) = 0;
 			virtual void Recive(User& usr, void* pkg) = 0;
-			virtual std::string showStatus() = 0;
+			virtual std::string statusJson() = 0;
 			ActionStatus getStatus(){return _status;}
 			virtual std::string name() = 0;
 			virtual std::string error() = 0;
+			virtual void clean() = 0;
 		protected:
 			void setStatus(ActionStatus status){this->_status = status;}
 		private:

@@ -10,8 +10,9 @@ namespace smdtest{
 		public:
 			void Do(User& usr);
 			void Recive(User& usr, void* pkg);
-			std::string showStatus();
+			std::string statusJson();
 			std::string name(){return _name;}
+			std::string error(){return _err;}
 			bool finish(){
 				return _ptr == _acts.size();
 			}
