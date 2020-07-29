@@ -1,9 +1,11 @@
 
 
-sm_build: 
+business.o: business.cpp .//action.h business.h smncpp/lockm.h
+	g++ -Wall -c business.cpp
+sm_build: business.o
 	+make -C docs sm_build
 
-sm_build_all: 
+sm_build_all: business.o
 	+make -C docs sm_build_all
 	+make -C smncpp sm_build_all
 
@@ -20,5 +22,5 @@ test:
 
 install:
 
-clean:
+clean: sm_clean_o
 
