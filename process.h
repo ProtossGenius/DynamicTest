@@ -7,6 +7,7 @@ namespace smdtest{
 		public:
 			void Do(User& usr);
 			void Recive(User& usr, void *pkg);
+			void Disconnect(User& usr, const std::string& cName);
 			std::string statusJson();
 			std::string name(){return _name;}
 			bool finish(){

@@ -30,8 +30,16 @@ namespace smdtest{
 			return;
 		}
 
-		auto& cur = current();
-		cur.Recive(usr, pkg);
+		current().Recive(usr, pkg);
+	}
+	
+	void Process::Disconnect(User& usr, const std::string& cName){
+		smnet::SMLockMgr _(this->_tsafe);
+		if(finish()){
+			return;
+		}
+
+		current().Disconnect(usr, cName);
 	}
 
 	std::string Process::statusJson(){

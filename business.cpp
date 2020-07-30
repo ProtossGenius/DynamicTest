@@ -8,7 +8,22 @@ namespace smdtest{
 
 		do {
 			lastFinish = false;
-			if(finish()){
+			if(loopEnd()){
+
+				if(_err.size() != 0){
+					this->_count = _MAX_COUNT;
+					return;
+				}
+
+				if (this->_count != -1){
+					++this->_count;
+				} 
+
+			    if(this->_count == -1 || this->_count < this->_MAX_COUNT){
+					this->_ptr = 0;
+					continue;
+				}
+
 				return;
 			}
 
@@ -37,21 +52,19 @@ namespace smdtest{
 	
 	void Business::Recive(User& usr, void* pkg){
 		smnet::SMLockMgr _(this->_tsafe);
-		if(finish()){
-			return;
-		}
+		current().Recive(usr, pkg);
+	}
 
-		auto& cur = current();
-		cur.Recive(usr, pkg);
+	void Business::Disconnect(User& usr, const std::string& cName){
+		smnet::SMLockMgr _(this->_tsafe);
+		current().Disconnect(usr, cName);
 	}
 	
 	std::string Business::statusJson(){
 		smnet::SMLockMgr _(this->_tsafe);
-		if (finish()){
-			return "{\"business\":\"" + name() + "\", \"status\":\"Finish\", \"index\":\"" + std::to_string(_ptr) + "\" \"current\":{}}, \"error\":\"" + _err + "\"}";
-		}
-
-		return "{\"business\":\"" + name() + "\", \"status\":\"Running\", \"index\":\"" + std::to_string(_ptr) + "\" \"current\":" + current().statusJson() + "}";
+		return "{\"business\":\"" + name() + "\",\"error\":\"" + error() + "\", \"size\":" + std::to_string(_acts.size()) +
+			", \"index\":" + std::to_string(_ptr) + ", \"current\":" + current().statusJson() +
+		   ", \"LOOP_COUNT\":" + std::to_string(_MAX_COUNT )+ ", \"cur_count\":" + std::to_string(_count)+ "}";
 	}
 
 }

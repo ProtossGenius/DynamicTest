@@ -19,6 +19,7 @@ namespace smdtest{
 			virtual void Do(User& usr) = 0;
 			virtual bool Filter(void* pkg) = 0;
 			virtual void Recive(User& usr, void* pkg) = 0;
+			virtual void Disconnect(User& usr, const std::string& name) = 0;
 			virtual std::string statusJson() = 0;
 			ActionStatus getStatus(){return _status;}
 			virtual std::string name() = 0;
@@ -36,6 +37,26 @@ namespace smdtest{
 	private: \
 	code \
 };
+
+	dtaction(NullAction, 
+		public:
+			NullAction(){setStatus(ActionStatus::Fail); }
+		public:
+		void Do(User&)override{}
+		bool Filter(void*)override{return false;}
+		void Recive(User&, void*)override{}
+		void Disconnect(User&, const std::string&)override{}
+		std::string statusJson() override{return "{}";}
+		std::string error()override{
+			return "NullAction";
+		}
+		void clean()override;		
+	);
+
+	NullAction& getNullAction(){
+		static NullAction null;
+		return null;
+	}
 }
 
 #endif /* end of include guard: ACTION_H_5KX1OQZA */
