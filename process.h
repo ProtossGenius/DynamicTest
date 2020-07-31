@@ -5,6 +5,8 @@ namespace smdtest{
 	class User;
 	class Process{
 		public:
+			Process(std::vector<Business>&& busis, const std::string& name):_busis(std::move(busis)), _ptr(0), _name(name) {}
+		public:
 			void Do(User& usr);
 			void Recive(User& usr, void *pkg);
 			void Disconnect(User& usr, const std::string& cName);
