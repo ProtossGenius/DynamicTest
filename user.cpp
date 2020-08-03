@@ -12,9 +12,11 @@ namespace smdtest{
 			{
 				lockm _(this->_tsafe);
 				_process->Do(*this);
+				if (this->_process->finish()){
+					this->_process = this->_strategy->getProcess();
+				}
 			}
-			auto cur = currentStrategy();
-			auto ticker = cur->getTicker();
+			auto ticker = this->_strategy->getTicker();
 			ticker->tick();//wait some time.
 		}
 	}

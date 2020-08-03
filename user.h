@@ -25,6 +25,8 @@ namespace smdtest{
 			smnet::channel<void*>& getRecvChan(){return this->_recvChan;}
 			//getData return value's pointer. usually should not new create data or you must remember free it..
 			virtual void* getData(const std::string& type, const std::string& key) = 0;
+			//setSession manage socket. get session should from getData.
+			virtual void setSession(const std::string& key, void* session) = 0;
 		protected:
 			//get a package.
 			virtual void* recv_once() = 0;
@@ -34,10 +36,6 @@ namespace smdtest{
 			void Recive(void* pkg);
 			void doAction();
 			void doRecv();
-			std::shared_ptr<Strategy> currentStrategy(){
-				smnet::SMLockMgr  _(this->_tsafe);
-				return _strategy;
-			}
 		private:
 			boost::asio::io_service& _ioc;
 			std::mutex _tsafe;
