@@ -13,7 +13,7 @@ namespace smdtest{
 				lockm _(this->_tsafe);
 				_process->Do(*this);
 				if (this->_process->finish()){
-					this->_process = this->_strategy->getProcess();
+					this->_process = this->_strategy->getProcess(this->_process->error());
 				}
 			}
 			auto ticker = this->_strategy->getTicker();

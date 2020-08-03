@@ -12,6 +12,7 @@ namespace smdtest{
 			void Disconnect(User& usr, const std::string& cName);
 			std::string statusJson();
 			std::string name(){return _name;}
+			std::string error(){return _err;}
 			bool finish(){
 				return _ptr == _busis.size();
 			}

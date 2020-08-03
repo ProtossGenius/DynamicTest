@@ -17,7 +17,7 @@ namespace smdtest{
 
 	class User{
 		public:
-			User(boost::asio::io_service& ioc, std::shared_ptr<Strategy> strategy):_ioc(ioc), _recvChan(200), _strategy(strategy), _process(strategy->getProcess()),
+			User(boost::asio::io_service& ioc, std::shared_ptr<Strategy> strategy):_ioc(ioc), _recvChan(200), _strategy(strategy), _process(strategy->getProcess("")),
 				_alive(true), _pkg(nullptr){ _recvChan.setExport(&_pkg);}
 		public:
 			void start();

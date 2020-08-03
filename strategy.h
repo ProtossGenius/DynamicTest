@@ -6,8 +6,8 @@
 namespace smdtest{
 	class Strategy{
 		public:
-			virtual std::shared_ptr<Process> getProcess() = 0;
-			virtual std::shared_ptr<smnet::Ticker> getTicker();
+			virtual std::shared_ptr<Process> getProcess(const std::string& err) = 0;
+			virtual std::shared_ptr<smnet::Ticker> getTicker() = 0;
 	};
 }
 
