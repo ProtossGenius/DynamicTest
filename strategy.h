@@ -2,13 +2,12 @@
 #define STRATEGY_H_U4JARKYK
 #include <memory>
 #include "process.h"
-
+#include "smncpp/ticker.h"
 namespace smdtest{
 	class Strategy{
-
 		public:
 			virtual std::shared_ptr<Process> getProcess() = 0;
-			virtual int interval_ms() = 0;
+			virtual std::shared_ptr<smnet::Ticker> getTicker();
 	};
 }
 

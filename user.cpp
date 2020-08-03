@@ -1,6 +1,5 @@
 #include "user.h"
 #include <boost/bind/bind.hpp>
-#include "smncpp/lockm.h"
 namespace smdtest{
 	typedef smnet::SMLockMgr lockm;
 	void User::start(){
@@ -12,9 +11,11 @@ namespace smdtest{
 		while(this->_alive){
 			{
 				lockm _(this->_tsafe);
-				this->action_once();
+				_process->Do(*this);
 			}
-			//TODO: use smnet::Ticker to wait some time.
+			auto cur = currentStrategy();
+			auto ticker = cur->getTicker();
+			ticker->tick();//wait some time.
 		}
 	}
 
@@ -22,9 +23,19 @@ namespace smdtest{
 		while(this->_alive){
 			{
 				lockm _(this->_tsafe);
-				void* pkg = this->recv_once();
-				this->_process->Recive(*this, pkg);
+				if (!this->_recvChan.empty()){
+					this->_recvChan.one_thread_get();
+				}else{
+					this->_pkg = this->recv_once();
+				}
+
+				this->Recive(this->_pkg);
 			}
 		}
+	}
+
+	void User::Recive(void* pkg){
+		this->recivePkg(pkg);
+		this->_process->Recive(*this, pkg);
 	}
 }
