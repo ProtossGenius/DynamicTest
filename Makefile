@@ -4,7 +4,7 @@ business.o: business.cpp ./action.h business.h smncpp/lockm.h
 	g++ -Wall -c business.cpp
 process.o: process.cpp ./action.h ./business.h process.h smncpp/lockm.h
 	g++ -Wall -c process.cpp
-user.o: user.cpp .//smncpp/lockm.h ./action.h ./business.h ./process.h ./smncpp/channel.h ./strategy.h user.h
+user.o: user.cpp .//smncpp/lockm.h ./action.h ./business.h ./process.h ./smncpp/channel.h ./smncpp/ticker.h ./strategy.h user.h
 	g++ -Wall -c user.cpp
 sm_build: business.o process.o user.o
 	+make -C docs sm_build
