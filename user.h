@@ -21,7 +21,7 @@ namespace smdtest{
 				_alive(true), _pkg(nullptr){ _recvChan.setExport(&_pkg);}
 		public:
 			void start();
-			void setAlive(bool alive){this->_alive = alive;}
+			bool isAlive(){return this->_alive;}
 			//getRecvChan all message send to _recvChan, it's thread-safe.
 			smnet::channel<void*>& getRecvChan(){return this->_recvChan;}
 		public: 
@@ -30,10 +30,21 @@ namespace smdtest{
 			//setSession manage socket. get session should from getData.
 			virtual void setSession(const std::string& key, void* session) = 0;
 			virtual std::string statusJson() = 0;
+			//anything should do when close User.
+			void close(){
+				//recv maybe in block if recvChan is empty. should cancel the block and free resourece.
+				this->_alive = false;
+				if (this->_recvChan.empty()){
+					this->_recvChan.push(nullptr);
+				}
+				_close();				
+			}
 		protected:
 			//deal with the package . and update user's data(action should not change user's data).
 			//if pkg need free, should free in here. 
 			virtual void recivePkg(void* pkg) = 0;
+			//you should free resource here, such as sessions.
+			virtual void _close();
 		private:
 			void Recive(void* pkg);
 			void doAction();
