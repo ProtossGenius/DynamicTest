@@ -4,7 +4,7 @@ namespace smdtest{
 	typedef smnet::SMLockMgr lockm;
 	void User::start(){
 		this->_ioc.post(boost::bind(&User::doAction, this));
-		this->_ioc.post(boost::bind(&User::doRecv, this));
+		this->_ioc.post(boost::bind(&User::dealPkg, this));
 	}
 
 	void User::doAction(){
@@ -21,23 +21,18 @@ namespace smdtest{
 		}
 	}
 
-	void User::doRecv(){
+	void User::dealPkg(){
 		while(this->_alive){
+			this->_recvChan.one_thread_get();//see User::User it's result save in _pkg;
 			{
 				lockm _(this->_tsafe);
-				if (!this->_recvChan.empty()){
-					this->_recvChan.one_thread_get();
-				}else{
-					this->_pkg = this->recv_once();
-				}
-
 				this->Recive(this->_pkg);
 			}
 		}
 	}
 
 	void User::Recive(void* pkg){
-		this->recivePkg(pkg);
 		this->_process->Recive(*this, pkg);
+		this->recivePkg(pkg);
 	}
 }
