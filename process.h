@@ -24,7 +24,6 @@ namespace smdtest{
 			size_t _ptr;
 			std::string _name;
 			std::string _err;
-			std::mutex _tsafe;
 	};
 }
 

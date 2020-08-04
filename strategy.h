@@ -4,9 +4,10 @@
 #include "process.h"
 #include "smncpp/ticker.h"
 namespace smdtest{
+	class User;
 	class Strategy{
 		public:
-			virtual std::shared_ptr<Process> getProcess(const std::string& err) = 0;
+			virtual std::shared_ptr<Process> getProcess(User& usr, const std::string& err) = 0;
 			virtual std::shared_ptr<smnet::Ticker> getTicker() = 0;
 	};
 }

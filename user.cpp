@@ -6,23 +6,32 @@ namespace smdtest{
 		this->_ioc.post(boost::bind(&User::doAction, this));
 		this->_ioc.post(boost::bind(&User::dealPkg, this));
 	}
+	
+	void User::onDisconnect(const std::string& sId){
+		lockm _(this->_tsafe);
+		this->_process->Disconnect(*this, sId);
+	}
 
 	void User::doAction(){
 		while(this->_alive){
+			this->_deadLock = false;
 			{
 				lockm _(this->_tsafe);
 				_process->Do(*this);
 				if (this->_process->finish()){
-					this->_process = this->_strategy->getProcess(this->_process->error());
+					this->_process = this->_strategy->getProcess(*this, this->_process->error());
 				}
 			}
 			auto ticker = this->_strategy->getTicker();
 			ticker->tick();//wait some time.
 		}
+
+		this->logData();
 	}
 
 	void User::dealPkg(){
 		while(this->_alive){
+			this->_deadLock = false;
 			this->_recvChan.one_thread_get();//see User::User it's result save in _pkg;
 			{
 				lockm _(this->_tsafe);

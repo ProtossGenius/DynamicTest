@@ -17,19 +17,30 @@ namespace smdtest{
 
 	class User{
 		public:
-			User(boost::asio::io_service& ioc, std::shared_ptr<Strategy> strategy):_ioc(ioc), _recvChan(200), _strategy(strategy), _process(strategy->getProcess("")),
-				_alive(true), _pkg(nullptr){ _recvChan.setExport(&_pkg);}
-		public:
+			User(boost::asio::io_service& ioc, std::shared_ptr<Strategy> strategy):_ioc(ioc), _recvChan(200), _strategy(strategy), 
+				_alive(true), _deadLock(true), _pkg(nullptr){ _recvChan.setExport(&_pkg);this->_process = this->_strategy->getProcess(*this, "");}
 			void start();
+			bool isDeadLock(){
+				if(_deadLock)return true;
+				_deadLock = true;
+				return false;
+			}
 			bool isAlive(){return this->_alive;}
 			//getRecvChan all message send to _recvChan, it's thread-safe.
 			smnet::channel<void*>& getRecvChan(){return this->_recvChan;}
+			void onDisconnect(const std::string& sId);
 		public: 
 			//getData return value's pointer. usually should not new create data or you must remember free it..
 			virtual void* getData(const std::string& type, const std::string& key) = 0;
-			//setSession manage socket. get session should from getData.
-			virtual void setSession(const std::string& key, void* session) = 0;
+			//uid get user's Unique id.
+			virtual std::string uid();
+			//statusJson return User's status.
 			virtual std::string statusJson() = 0;
+			//logData log data. (it always be call when be closed == Do loop end.).
+			void logData() {
+				smnet::SMLockMgr _(this->_tsafe);
+				_logData();
+			}
 			//anything should do when close User.
 			void close(){
 				//recv maybe in block if recvChan is empty. should cancel the block and free resourece.
@@ -44,7 +55,8 @@ namespace smdtest{
 			//if pkg need free, should free in here. 
 			virtual void recivePkg(void* pkg) = 0;
 			//you should free resource here, such as sessions.
-			virtual void _close();
+			virtual void _close() {}
+			virtual void _logData() = 0;
 		private:
 			void Recive(void* pkg);
 			void doAction();
@@ -57,6 +69,7 @@ namespace smdtest{
 			std::shared_ptr<Strategy> _strategy;
 			std::shared_ptr<Process> _process;
 		    std::atomic_bool _alive;
+			std::atomic_bool _deadLock;
 			void* _pkg;
 	};
 	

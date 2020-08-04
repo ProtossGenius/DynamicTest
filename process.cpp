@@ -3,7 +3,6 @@
 
 namespace smdtest{
 	void Process::Do(User& usr){
-		smnet::SMLockMgr _(this->_tsafe);
 		bool lastFinish = false;
 
 		do{
@@ -25,7 +24,6 @@ namespace smdtest{
 	}
 
 	void Process::Recive(User& usr, void* pkg){
-		smnet::SMLockMgr _(this->_tsafe);
 		if(finish()){
 			return;
 		}
@@ -34,7 +32,6 @@ namespace smdtest{
 	}
 	
 	void Process::Disconnect(User& usr, const std::string& cName){
-		smnet::SMLockMgr _(this->_tsafe);
 		if(finish()){
 			return;
 		}
@@ -43,7 +40,6 @@ namespace smdtest{
 	}
 
 	std::string Process::statusJson(){
-		smnet::SMLockMgr _(this->_tsafe);
 		if(finish()){
 			return "{\"process\":\"" + name() + "\", \"status\":\"Finish\", \"index\":\"" + std::to_string(_ptr) + "\" \"current\":{}}, \"error\":\"" + _err + "\"}";
 		}
