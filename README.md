@@ -23,5 +23,35 @@ Strategy在为User分配Process的时候会得到User信息，这意味着你可
 
 * 数据的统计
 
-后续大概会定义一个相对通用的统计模块。数据的统计有两种思路，像是排队时间、服务器响应时间这样的统计数据即可以通过统计模块来统计也可以通过输出日志文件的方式
-留下数据。另一个方法是
+数据的统计有两种思路，像是排队时间、服务器响应时间这样的统计数据即可以通过统计模块来统计也可以通过输出日志文件的方式留下数据。另一个方法是将其存储在自定义的
+统计模块中，推荐是两种兼用——前者可以不必担心数据的丢失，后者可以在运行时实时查看数据。
+
+* 关于开发
+
+Dtest的核心代码在[./smdtest]中，第三方库包括boost（的异步）和smn-cpp（使用了其Ticker、LockManager等），boost的安装可以参考网络，smn-cpp的使用借助了工具smake（
+我知道你是第一次听说），对应的手动操作参考./smdtest/sls.json，与其等价的命令如下：
+sls.json
+
+```
+[{"type":"g","path":"github.com/ProtossGenius/smn-cpp/smncpp", "cmd_target":["make sm_build -j8"], "cmd_local":[" echo \"this is local cmd\""]}]
+```
+等价的命令
+```
+cd /tmp
+git clone https://github.com/ProtossGenius/smn-cpp XXX/smn-cpp
+ln -s XXX/smn-cpp/smncpp smncpp
+cd smncpp && make sm_build -j8 
+cd - && echo this is local cmd# 这个仅仅是测试用的
+
+```
+demo代码(将)位于./test/demo
+在这里简短的介绍一下smake，因为demo代码中也会用到。它会分析目录树并且生成Makefile来确保所有的cpp都会被编译，并且在某些文件有修改的情况下能够（尽可能）最小程度的
+重新编译。同时它也会读取目录下的sls.json文件，分析需要用到的第三方库（目前仅支持git{type:g}和本地目录{type:l}）并且创建软连接。而后依次分别在目标目录和sls.json所
+在目录运行cmd\_target，cmd\_local，下面的json摘抄z自smdtest/sls.json
+
+* 开发时的一些限制
+1. 不能在Action中使用任何版本的thread::sleep()在异步调用中使用thread::sleep必然会导致死锁，作为代替smncpp中的ticker.h头文件中提供了sleep(int millsec)函数，可以安全的等待millsec毫秒。
+2. 不应该再Action::Do中添加阻塞，因为Do和Recive是互斥的，正确的方法是将状态置为ActionStatus::WaitResult然后在Action::Recive中收到特定的包之后将Action的状态置为ActionStatus::Success
+或者Fail。（看上去Action没有任何地方需要阻塞一会儿的，因为也没有必要在收包的时候阻塞一会儿）
+
+

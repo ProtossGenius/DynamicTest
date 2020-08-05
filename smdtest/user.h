@@ -16,6 +16,7 @@
 namespace smdtest{
 
 	class User{
+		typedef smnet::SMLockMgr lockm;
 		public:
 			User(boost::asio::io_service& ioc, std::shared_ptr<Strategy> strategy):_ioc(ioc), _recvChan(200), _strategy(strategy), 
 				_alive(true), _deadLock(true), _pkg(nullptr){ _recvChan.setExport(&_pkg);this->_process = this->_strategy->getProcess(*this, "");}
@@ -29,13 +30,27 @@ namespace smdtest{
 			//getRecvChan all message send to _recvChan, it's thread-safe.
 			smnet::channel<void*>& getRecvChan(){return this->_recvChan;}
 			void onDisconnect(const std::string& sId);
+			void setStrategy(std::shared_ptr<Strategy> ns){
+				smnet::SMLockMgr _(this->_tsafe);
+				this->_strategy = ns;
+			}
+
 		public: 
 			//getData return value's pointer. usually should not new create data or you must remember free it..
-			virtual void* getData(const std::string& type, const std::string& key) = 0;
+			void* getData(const std::string& type, const std::string& key) {
+				lockm _(this->_tsafe);
+				return this->_getData(type, key);
+			}
 			//uid get user's Unique id.
-			virtual std::string uid();
+			std::string uid(){
+				lockm _(this->_tsafe);
+				return this->_uid();
+			}
 			//statusJson return User's status.
-			virtual std::string statusJson() = 0;
+			std::string statusJson() {
+				lockm _(this->_tsafe);
+				return  this->_statusJson();
+			}
 			//logData log data. (it always be call when be closed == Do loop end.).
 			void logData() {
 				smnet::SMLockMgr _(this->_tsafe);
@@ -57,6 +72,14 @@ namespace smdtest{
 			//you should free resource here, such as sessions.
 			virtual void _close() {}
 			virtual void _logData() = 0;
+			virtual void* _getData(const std::string& type, const std::string& key) = 0;
+			virtual std::string _uid() = 0;
+			virtual std::string _statusJson();
+			std::shared_ptr<Process> currentProcess(){
+				smnet::SMLockMgr _(this->_tsafe);
+				return this->_process;
+			}
+			
 		private:
 			void Recive(void* pkg);
 			void doAction();
