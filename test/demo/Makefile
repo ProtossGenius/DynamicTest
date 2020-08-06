@@ -29,5 +29,6 @@ test:
 
 install:
 
-clean:
+clean: sm_clean_o
+	rm -rf ./run.main	
 

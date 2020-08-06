@@ -44,7 +44,7 @@ cd smncpp && make sm_build -j8
 cd - && echo this is local cmd# 这个仅仅是测试用的
 
 ```
-demo代码(将)位于./test/demo
+demo代码位于./test/demo
 在这里简短的介绍一下smake，因为demo代码中也会用到。它会分析目录树并且生成Makefile来确保所有的cpp都会被编译，并且在某些文件有修改的情况下能够（尽可能）最小程度的
 重新编译。同时它也会读取目录下的sls.json文件，分析需要用到的第三方库（目前仅支持git{type:g}和本地目录{type:l}）并且创建软连接。而后依次分别在目标目录和sls.json所
 在目录运行cmd\_target，cmd\_local，下面的json摘抄z自smdtest/sls.json
