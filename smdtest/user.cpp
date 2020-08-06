@@ -1,10 +1,20 @@
 #include "user.h"
 #include <boost/bind/bind.hpp>
 #include <iostream>
+using namespace std;
 namespace smdtest{
 	typedef smnet::SMLockMgr lockm;
+	User::User(boost::asio::io_service& ioc, std::shared_ptr<Strategy> strategy):_ioc(ioc), _worker(new boost::asio::io_service::work(ioc)), _recvChan(200), _strategy(strategy), 
+	_alive(true), _deadLock(true), _pkg(nullptr){ 
+		_recvChan.setExport(&_pkg);
+		this->_process = this->_strategy->firstProcess();
+	}
+
+
 	void User::start(){
-		this->_ioc.post(boost::bind(&User::doAction, this));
+		this->_strategy->getTicker()->setTickDo([&]{
+			this->_ioc.post(boost::bind(&User::doAction, this));
+		});
 	}
 	
 	void User::onDisconnect(const std::string& sId){
@@ -20,13 +30,6 @@ namespace smdtest{
 			if (this->_process->finish()){
 				this->_process = this->_strategy->getProcess(*this, this->_process->error());
 			}
-		}
-		auto ticker = this->_strategy->getTicker();
-		ticker->tick();//wait some time.
-		if (this->_alive){
-			this->_ioc.post(boost::bind(&User::doAction, this));
-		}else{
-			this->logData();
 		}
 	}
 	void User::push(void*pkg){

@@ -7,9 +7,7 @@ namespace demo{
 			_login->getBussnessVector().emplace_back(bus);
 		}
 std::shared_ptr<smdtest::Process> MyStrategy::getProcess(smdtest::User &usr, const std::string &err) {
-			//std::cout << "create process for :" << usr.uid() <<std::endl;
 			auto& str = *smdtest::getSharedData<std::string>(usr, "", "Success");
-//			std::cout << "?Success = " << str << "|" <<(str != "") <<std::endl;
 			if (str != ""){
 				usr.close();
 			}

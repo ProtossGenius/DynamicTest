@@ -22,4 +22,3 @@ install:
 clean:sm_clean_o
 	+make -C demo clean
 
-

@@ -44,14 +44,15 @@ cd smncpp && make sm_build -j8
 cd - && echo this is local cmd# 这个仅仅是测试用的
 
 ```
-demo代码位于./test/demo
+demo代码位于./test/demo，它实现了一个简单的策略——一直执行，直到在Action::Do返回Success时关闭User。基础的用法基本上在里面都有展现。
 在这里简短的介绍一下smake，因为demo代码中也会用到。它会分析目录树并且生成Makefile来确保所有的cpp都会被编译，并且在某些文件有修改的情况下能够（尽可能）最小程度的
 重新编译。同时它也会读取目录下的sls.json文件，分析需要用到的第三方库（目前仅支持git{type:g}和本地目录{type:l}）并且创建软连接。而后依次分别在目标目录和sls.json所
-在目录运行cmd\_target，cmd\_local，下面的json摘抄z自smdtest/sls.json
+在目录运行cmd\_target，cmd\_local。获得方式是：
+```
+go get -u github.com/ProtossGenius/smntools/cmd/smake
+```
 
-* 开发时的一些限制
-1. 不能在Action中使用任何版本的thread::sleep()在异步调用中使用thread::sleep必然会导致死锁，作为代替smncpp中的ticker.h头文件中提供了sleep(int millsec)函数，可以安全的等待millsec毫秒。
-2. 不应该再Action::Do中添加阻塞，因为Do和Recive是互斥的，正确的方法是将状态置为ActionStatus::WaitResult然后在Action::Recive中收到特定的包之后将Action的状态置为ActionStatus::Success
-或者Fail。（看上去Action没有任何地方需要阻塞一会儿的，因为也没有必要在收包的时候阻塞一会儿）
-
-
+* 开发相关
+1. 不能在Action中使用任何版本的thread::sleep()在异步调用中使用thread::sleep必然会导致死锁，就算是不会导致死锁的Sleep版本（例如smncpp/ticker.h中提供的sleep）也不应该使用，
+Action中的方法不应该因为任何因素而阻塞(最好的情况也会导致性能下降)。
+2. User::close()方法只应该通过Strategy::getProcess()调用，只有这样才能够保证它是在单线程环境下关闭而且只被关闭一次。

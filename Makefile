@@ -20,10 +20,11 @@ sm_clean_o:
 debug:
 
 qrun:
-
-test: qrun
+	cd test && make test -j8
+test: zero 
 	cd test && make test -j8
 install:
 
 clean: sm_clean_o
 	+make -C test clean
+zero:

@@ -18,8 +18,7 @@ namespace smdtest{
 	class User{
 		typedef smnet::SMLockMgr lockm;
 		public:
-			User(boost::asio::io_service& ioc, std::shared_ptr<Strategy> strategy):_ioc(ioc), _recvChan(200), _strategy(strategy), 
-				_alive(true), _deadLock(true), _pkg(nullptr){ _recvChan.setExport(&_pkg);this->_process = this->_strategy->firstProcess();}
+			User(boost::asio::io_service& ioc, std::shared_ptr<Strategy> strategy);
 			virtual ~User(){}
 			void start();
 			bool isDeadLock(){
@@ -32,7 +31,9 @@ namespace smdtest{
 			void onDisconnect(const std::string& sId);
 			void setStrategy(std::shared_ptr<Strategy> ns){
 				smnet::SMLockMgr _(this->_tsafe);
+				this->_strategy->getTicker()->close();
 				this->_strategy = ns;
+				start();
 			}
 
 		public: 
@@ -75,9 +76,13 @@ namespace smdtest{
 			void close(){
 				//recv maybe in block if recvChan is empty. should cancel the block and free resourece.
 				this->_alive = false;
+				this->_strategy->getTicker()->setTickDo([]{});
+				delete this->_worker;
+				this->_worker = nullptr;
 				if (this->_recvChan.empty()){
 					this->_recvChan.push(nullptr);
 				}
+				this->_logData();
 				_close();				
 			}
 		protected:
@@ -100,6 +105,7 @@ namespace smdtest{
 			void dealPkg();
 		private:
 			boost::asio::io_service& _ioc;
+			boost::asio::io_service::work* _worker;
 			std::mutex _tsafe;
 			smnet::channel<void*> _recvChan;
 			int _interval;
