@@ -1,6 +1,5 @@
 #include "process.h"
 #include "smncpp/lockm.h"
-
 namespace smdtest{
 	void Process::Do(User& usr){
 		bool lastFinish = false;
@@ -14,9 +13,11 @@ namespace smdtest{
 			if(cur.error().size() != 0){
 				_err = cur.error();
 				_ptr = _busis.size();
+				cur.clean();
 			}else if(cur.finish()){
 				++_ptr;
 				lastFinish = true;
+				cur.clean();
 			}else{
 				cur.Do(usr);
 			}

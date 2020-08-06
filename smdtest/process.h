@@ -5,7 +5,8 @@ namespace smdtest{
 	class User;
 	class Process{
 		public:
-			Process(std::vector<Business>&& busis, const std::string& name):_busis(std::move(busis)), _ptr(0), _name(name) {}
+			Process(const std::string& name):_ptr(0), _name(name){}
+			Process(std::vector<Business>&& busis, const std::string& name):_ptr(0), _name(name), _busis(std::move(busis)) {}
 		public:
 			void Do(User& usr);
 			void Recive(User& usr, void *pkg);
@@ -16,14 +17,20 @@ namespace smdtest{
 			bool finish(){
 				return _ptr == _busis.size();
 			}
-
+			void clean(){
+				_ptr = 0;
+				_err = "";
+			}
+		public:	//unsafe
+			std::vector<Business>& getBussnessVector(){return this->_busis;}
 		private:
 			Business& current(){return _busis[_ptr];}
 		private:
-			std::vector<Business> _busis;
 			size_t _ptr;
 			std::string _name;
 			std::string _err;
+
+			std::vector<Business> _busis;
 	};
 }
 

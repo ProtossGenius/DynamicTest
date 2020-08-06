@@ -19,7 +19,8 @@ namespace smdtest{
 		typedef smnet::SMLockMgr lockm;
 		public:
 			User(boost::asio::io_service& ioc, std::shared_ptr<Strategy> strategy):_ioc(ioc), _recvChan(200), _strategy(strategy), 
-				_alive(true), _deadLock(true), _pkg(nullptr){ _recvChan.setExport(&_pkg);this->_process = this->_strategy->getProcess(*this, "");}
+				_alive(true), _deadLock(true), _pkg(nullptr){ _recvChan.setExport(&_pkg);this->_process = this->_strategy->firstProcess();}
+			virtual ~User(){}
 			void start();
 			bool isDeadLock(){
 				if(_deadLock)return true;
@@ -27,8 +28,7 @@ namespace smdtest{
 				return false;
 			}
 			bool isAlive(){return this->_alive;}
-			//getRecvChan all message send to _recvChan, it's thread-safe.
-			smnet::channel<void*>& getRecvChan(){return this->_recvChan;}
+			void push(void* pkg);
 			void onDisconnect(const std::string& sId);
 			void setStrategy(std::shared_ptr<Strategy> ns){
 				smnet::SMLockMgr _(this->_tsafe);
@@ -36,15 +36,30 @@ namespace smdtest{
 			}
 
 		public: 
+			boost::asio::io_service& getIoSvc(){return _ioc;}
+
 			//getData return value's pointer. usually should not new create data or you must remember free it..
-			void* getData(const std::string& type, const std::string& key) {
+			void* getData(const std::string& type, const std::string& key){
+				return this->_getData(type, key);
+			}
+			//never call it in Action but should call it in another.
+			void* getDataByLock(const std::string& type, const std::string& key) {
 				lockm _(this->_tsafe);
 				return this->_getData(type, key);
 			}
-			//uid get user's Unique id.
-			std::string uid(){
+
+			//statusJson return User's status.
+			std::string statusJsonByLock() {
 				lockm _(this->_tsafe);
-				return this->_uid();
+				return  this->_statusJson();
+			}
+
+			virtual std::string uid() = 0;
+
+			//logData log data. (it always be call when be closed == Do loop end.).
+			void logDataByLock() {
+				smnet::SMLockMgr _(this->_tsafe);
+				_logData();
 			}
 			//statusJson return User's status.
 			std::string statusJson() {
@@ -73,8 +88,7 @@ namespace smdtest{
 			virtual void _close() {}
 			virtual void _logData() = 0;
 			virtual void* _getData(const std::string& type, const std::string& key) = 0;
-			virtual std::string _uid() = 0;
-			virtual std::string _statusJson();
+			virtual std::string _statusJson() = 0;
 			std::shared_ptr<Process> currentProcess(){
 				smnet::SMLockMgr _(this->_tsafe);
 				return this->_process;
@@ -97,9 +111,15 @@ namespace smdtest{
 	};
 	
 	template<typename DataType>
-	DataType& getUserData(User& usr, const std::string& type, const std::string& key){
+	std::shared_ptr<DataType> getSharedData(User& usr, const std::string& type, const std::string& key){
+		return std::shared_ptr<DataType>((DataType*)usr.getData(type, key));
+	}
+	
+	template<typename DataType>
+	DataType& getRefData(User& usr, const std::string& type, const std::string& key){
 		return *(DataType*)usr.getData(type, key);
 	}
+
 }
 
 #endif /* end of include guard: USER_H_UV8CBAVZ */

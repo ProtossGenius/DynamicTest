@@ -17,10 +17,11 @@ namespace smdtest{
 		Fail 
 	};
 
-
+	std::string to_string(ActionStatus as);
+	
 	class Action{
 		public:
-			Action(){}
+			Action():_status(ActionStatus::Ready){}
 			virtual ~Action(){}
 		public:
 			virtual void Do(User& usr) = 0;
@@ -28,10 +29,25 @@ namespace smdtest{
 			virtual void Recive(User& usr, void* pkg) = 0;
 			virtual void Disconnect(User& usr, const std::string& name) = 0;
 			virtual std::string statusJson() = 0;
-			virtual ActionStatus getStatus() = 0;
 			virtual std::string name() = 0;
 			virtual std::string desc() = 0;
-			virtual std::string error() = 0;
+			std::string error(){
+				return _err;
+			}
+		public:
+			ActionStatus getStatus(){return _status;}
+			void clean(){_status = ActionStatus::Ready;_err = "";}
+		protected:
+			void setError(const std::string& err){
+				_status = ActionStatus::Fail;
+				_err = err;
+			}
+			void setStatus(ActionStatus status){
+				this->_status = status;
+			}
+		private:
+			ActionStatus _status;
+			std::string _err;
 	};
 
 	class ActionManager{
@@ -64,32 +80,30 @@ namespace smdtest{
 	};
 
 #define _STR(str) #str
-
 #define dtaction(action, code) class action :public Action {  \
 	public: \
 		static Action* New(){return new action();} \
 		std::string name() override{return _STR(action);} \
-	private: \
-		static Register _reg;\
+	public:\
+		static const std::string Name(){\
+			static const Register _reg(_STR(action), action::New);\
+			return _STR(action);}\
 	code \
 }; \
-Register action::_reg(_STR(action), action::New)
 
-
-	dtaction(NullAction, 
+	dtaction(NullAction,  
 		public:
-		void Do(User&)override{}
-		std::string desc(){return "NullAction Desc";}
-		ActionStatus getStatus(){return ActionStatus::Fail;}
-		bool Filter(void*)override{return false;}
-		void Recive(User&, void*)override{}
-		void Disconnect(User&, const std::string&)override{}
-		std::string statusJson() override{return "{}";}
-		std::string error()override{
-			return "NullAction";
-		}
+			NullAction():Action(){setStatus(ActionStatus::Fail); setError("NullAction");}
+		public:
+			void Do(User&)override{}
+			std::string desc(){return "NullAction Desc";}
+			bool Filter(void*)override{return false;}
+			void Recive(User&, void*)override{}
+			void Disconnect(User&, const std::string&)override{}
+			std::string statusJson() override{return "{}";}
 	);
 
+	inline 
 	NullAction& getNullAction(){
 		static NullAction null;
 		return null;

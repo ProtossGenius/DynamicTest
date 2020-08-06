@@ -8,7 +8,6 @@ namespace smdtest{
 		do {
 			lastFinish = false;
 			if(loopEnd()){
-
 				if(_err.size() != 0){
 					this->_count = _MAX_COUNT;
 					return;
@@ -35,11 +34,13 @@ namespace smdtest{
 				case ActionStatus::WaitResult:
 					break;
 				case ActionStatus::Fail:
+					cur.clean();
 					_err = cur.error();
 					//set finish
 					_ptr = _acts.size();
 					break;
 				case ActionStatus::Success:
+					cur.clean();
 					++_ptr;
 					lastFinish = true;
 					break;
