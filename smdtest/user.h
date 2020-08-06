@@ -19,7 +19,7 @@ namespace smdtest{
 		typedef smnet::SMLockMgr lockm;
 		public:
 			User(boost::asio::io_service& ioc, std::shared_ptr<Strategy> strategy);
-			virtual ~User(){}
+			virtual ~User(){if (this->_worker != nullptr){delete _worker;}}
 			void start();
 			bool isDeadLock(){
 				if(_deadLock)return true;
