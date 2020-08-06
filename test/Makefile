@@ -16,7 +16,7 @@ debug:
 qrun:
 
 test:
-
+	+make -C demo qrun
 install:
 
 clean:sm_clean_o

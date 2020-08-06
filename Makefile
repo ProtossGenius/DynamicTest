@@ -21,8 +21,8 @@ debug:
 
 qrun:
 
-test:
-
+test: qrun
+	cd test && make test -j8
 install:
 
 clean: sm_clean_o
