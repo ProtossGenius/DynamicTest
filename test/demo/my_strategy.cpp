@@ -3,7 +3,7 @@
 #include <iostream>
 namespace demo{
 	MyStrategy::MyStrategy():_ticker(smnet::GetTickManager().getTicker(200)), _login(std::make_shared<smdtest::Process>("LoginProcess")){
-			smdtest::Business bus(std::vector<std::string>{smdtest::LoginAction::Name()}, "LoginBusiness", 1);
+			smdtest::Business bus(std::vector<std::string>{smdtest::NameLoginAction}, "LoginBusiness", 1);
 			_login->getBussnessVector().emplace_back(bus);
 		}
 std::shared_ptr<smdtest::Process> MyStrategy::getProcess(smdtest::User &usr, const std::string &err) {

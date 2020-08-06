@@ -96,7 +96,7 @@ namespace smdtest{
 			NullAction():Action(){setStatus(ActionStatus::Fail); setError("NullAction");}
 		public:
 			void Do(User&)override{}
-			std::string desc(){return "NullAction Desc";}
+			std::string desc() override{return "NullAction Desc";}
 			bool Filter(void*)override{return false;}
 			void Recive(User&, void*)override{}
 			void Disconnect(User&, const std::string&)override{}
