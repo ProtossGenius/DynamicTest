@@ -60,4 +60,4 @@ Action中的方法不应该因为任何因素而阻塞(最好的情况也会导�
 <h2 id="about_tools"> 工具</h2>
 1. cmd/sdmtcact 
 一个工具用于统计目标目录下的Action，并通过自动代码生成实现自动注册（注意，Action必须在smdtest命名空间，且必须要使用dtaction宏，将来可能会增加更多种类的分析，dtaction的使用
-可以参考[DEMO](test/demo/actions/login_action.h）)
+可以参考[DEMO](test/demo/actions/login_action.h)
