@@ -31,7 +31,7 @@ namespace smdtest{
 			void push(void* pkg);
 			void setStrategyWithLock(std::shared_ptr<Strategy> ns){
 				lockm _(this->_tsafe);
-				this->_strategy->getTicker()->close();
+				this->_strategy->getTicker()->setTickDo(nullptr);
 				this->_strategy = ns;
 				start();
 			}
