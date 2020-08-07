@@ -1,11 +1,11 @@
 
 actions.o: actions.cpp ./actions/login_action.h ./actions/smdtest/action.h ./actions/smdtest/smncpp/lockm.h actions.h
 	g++ -Wall -c actions.cpp
-main.o: main.cpp ./actions.h ./actions/login_action.h ./actions/smdtest/action.h ./actions/smdtest/smncpp/lockm.h ./smdtest/action.h ./smdtest/business.h ./smdtest/process.h ./smdtest/smncpp/channel.h ./smdtest/smncpp/lockm.h ./smdtest/smncpp/ticker.h \
-./smdtest/strategy.h ./smdtest/user.h MyUser.h my_strategy.h
+main.o: main.cpp ./actions.h ./actions/login_action.h ./actions/smdtest/action.h ./actions/smdtest/smncpp/lockm.h ./smdtest/business.h ./smdtest/process.h ./smdtest/smncpp/channel.h ./smdtest/smncpp/lockm.h ./smdtest/smncpp/ticker.h ./smdtest/strategy.h \
+./smdtest/user.h MyUser.h my_strategy.h
 	g++ -Wall -c main.cpp
-my_strategy.o: my_strategy.cpp ./actions.h ./actions/login_action.h ./actions/smdtest/action.h ./actions/smdtest/smncpp/lockm.h ./smdtest/action.h ./smdtest/business.h ./smdtest/process.h ./smdtest/smncpp/channel.h ./smdtest/smncpp/lockm.h ./smdtest/smncpp/ticker.h \
-./smdtest/strategy.h my_strategy.h smdtest/user.h
+my_strategy.o: my_strategy.cpp ./actions.h ./actions/login_action.h ./actions/smdtest/action.h ./actions/smdtest/smncpp/lockm.h ./smdtest/business.h ./smdtest/process.h ./smdtest/smncpp/channel.h ./smdtest/smncpp/lockm.h ./smdtest/smncpp/ticker.h ./smdtest/strategy.h \
+my_strategy.h smdtest/user.h
 	g++ -Wall -c my_strategy.cpp
 sm_build: actions.o main.o my_strategy.o
 	+make -C actions sm_build
