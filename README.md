@@ -2,7 +2,7 @@
 
 * 描述
 
-C++动态测试。一种黑盒测试，作为经典单元测试的补充，特别针对网络服务器系统，关于类的含义请查看docs目录下的[术语表](./docs/Glossary.md)，这个表格很短，
+C++动态测试。一种黑盒测试，作为经典单元测试的补充，特别针对网络服务器系统，关于下文中提到的类的含义请查看docs目录下的[术语表](./docs/Glossary.md)，这个表格很短，
 所以建议在看下文之前先去喵一眼。(go.mod是为了写一些[工具](#about_tools))
 DTest设计的思路是使用Action来模拟用户的基本操作（对于服务器系统来说就是发包）并且Action根据服务器回包来判断这项操作是否成功。由于User拥有唯
 一ID（User::uid）接口，所以应该据此设计统计模块（而不应该在Action中修改User数据），User数据的只应该依据服务器的回包修改。
@@ -66,10 +66,11 @@ Action::Do在得到结果前一直调用（如游戏中的战斗），那么你�
 5. User没有提供无锁版本的setStrategy方法，原因是Action中不应该修改User的Strategy，而Strategy可以很轻易的改变自身的行为，无论是用impl手法还是使用策略模式，它没有必要
 通过改变User的当前的Strategy来更改User的行为策略。所有的WithLock函数都是提供给开发者在其他线程中使用的。
 6. 总是应该通过User的friend模板方法来获得User的Data，由于User::getData返回的是一个void\*，它太容易导致内存泄漏了，不论是忘记删除还是重复删除。（因此getData和getDataWithLock
-也被设置为私有的）
+也被设置为私有的）其friend模板方法会强迫你选择是通过shared\_pointer还是一个引用来取用数据。
 
 <h2 id="about_tools"> 工具</h2>
 1. cmd/sdmtcact 
 一个工具用于统计目标目录下的Action，并通过自动代码生成实现自动注册（注意，Action必须在smdtest命名空间，且必须要使用dtaction宏，dtaction的使用
-可以参考 [DEMO](./test/demo/README.md) .
+可以参考 demo .
 
+[demo](./test/demo/README.md)
