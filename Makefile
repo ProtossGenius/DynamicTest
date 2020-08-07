@@ -32,5 +32,6 @@ clean: sm_clean_o
 zero:
 
 init:
+	go get -u github.com/ProtossGenius/smntools/cmd/smake
 	smake
 

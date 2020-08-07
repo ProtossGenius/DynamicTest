@@ -39,15 +39,6 @@ namespace smdtest{
 		public: 
 			boost::asio::io_service& getIoSvc(){return _ioc;}
 
-			//getData return value's pointer. usually should not new create data or you must remember free it..
-			void* getData(const std::string& type, const std::string& key){
-				return this->_getData(type, key);
-			}
-			//never call it in Action but should call it in another.
-			void* getDataWithLock(const std::string& type, const std::string& key) {
-				lockm _(this->_tsafe);
-				return this->_getData(type, key);
-			}
 
 			//statusJson return User's status.
 			std::string statusJsonWithLock() {
@@ -70,19 +61,6 @@ namespace smdtest{
 			void logData() {
 				_logData();
 			}
-			//anything should do when close User.
-			void close(){
-				//recv maybe in block if recvChan is empty. should cancel the block and free resourece.
-				this->_alive = false;
-				this->_strategy->getTicker()->setTickDo([]{});
-				delete this->_worker;
-				this->_worker = nullptr;
-				if (this->_recvChan.empty()){
-					this->_recvChan.push(nullptr);
-				}
-				this->_logData();
-				_close();				
-			}
 		protected:
 			//deal with the package . and update user's data(action should not change user's data).
 			//if pkg need free, should free in here. 
@@ -95,8 +73,18 @@ namespace smdtest{
 			std::shared_ptr<Process> currentProcess(){
 				return this->_process;
 			}
-			
 		private:
+			//getData return value's pointer. usually should not new create data or you must remember free it..
+			void* getData(const std::string& type, const std::string& key){
+				return this->_getData(type, key);
+			}
+			//never call it in Action but should call it in another.
+			void* getDataWithLock(const std::string& type, const std::string& key) {
+				lockm _(this->_tsafe);
+				return this->_getData(type, key);
+			}
+		private:
+			void close();
 			void Recive(void* pkg);
 			void doAction();
 			void dealPkg();
@@ -111,16 +99,36 @@ namespace smdtest{
 		    std::atomic_bool _alive;
 			std::atomic_bool _deadLock;
 			void* _pkg;
+		private:
+			template<typename DataType>
+			friend	const std::shared_ptr<DataType> getSharedData (User& usr, const std::string& type, const std::string& key);
+			template<typename DataType>
+			friend const DataType& getRefData(User& usr, const std::string& type, const std::string& key);
+			template<typename DataType>
+			friend	const std::shared_ptr<DataType> getSharedDataWithLock (User& usr, const std::string& type, const std::string& key);
+			template<typename DataType>
+			friend const DataType& getRefDataWithLock(User& usr, const std::string& type, const std::string& key);
+			friend class Strategy;
+
 	};
 	
 	template<typename DataType>
-	std::shared_ptr<DataType> getSharedData(User& usr, const std::string& type, const std::string& key){
+	const std::shared_ptr<DataType> getSharedData(User& usr, const std::string& type, const std::string& key){
 		return std::shared_ptr<DataType>((DataType*)usr.getData(type, key));
 	}
 	
 	template<typename DataType>
-	DataType& getRefData(User& usr, const std::string& type, const std::string& key){
+	const DataType& getRefData(User& usr, const std::string& type, const std::string& key){
 		return *(DataType*)usr.getData(type, key);
+	}
+	template<typename DataType>
+	const std::shared_ptr<DataType> getSharedDataWithLock(User& usr, const std::string& type, const std::string& key){
+		return std::shared_ptr<DataType>((DataType*)usr.getDataWithLock(type, key));
+	}
+	
+	template<typename DataType>
+	const DataType& getRefDataWithLock(User& usr, const std::string& type, const std::string& key){
+		return *(DataType*)usr.getDataWithLock(type, key);
 	}
 
 }

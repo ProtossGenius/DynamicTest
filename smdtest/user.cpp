@@ -10,6 +10,18 @@ namespace smdtest{
 		this->_process = this->_strategy->firstProcess();
 	}
 
+	void User::close(){
+		//recv maybe in block if recvChan is empty. should cancel the block and free resourece.
+		this->_alive = false;
+		this->_strategy->getTicker()->setTickDo([]{});
+		delete this->_worker;
+		this->_worker = nullptr;
+		if (this->_recvChan.empty()){
+			this->_recvChan.push(nullptr);
+		}
+		this->_logData();
+		_close();				
+	}
 
 	void User::start(){
 		this->_strategy->getTicker()->setTickDo([&]{

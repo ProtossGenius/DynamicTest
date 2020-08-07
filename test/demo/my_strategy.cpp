@@ -9,7 +9,7 @@ namespace demo{
 std::shared_ptr<smdtest::Process> MyStrategy::getProcess(smdtest::User &usr, const std::string &err) {
 			auto& str = *smdtest::getSharedData<std::string>(usr, "", "Success");
 			if (str != ""){
-				usr.close();
+				closeUser(usr);
 			}
 			_login->clean();
 			return _login;
