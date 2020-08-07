@@ -1,7 +1,25 @@
 #include "business.h"
 #include "sstream"
 #include "smncpp/lockm.h"
+#include "action.h"
+
 namespace smdtest{
+
+	Business::Business(std::vector<std::string> acts, std::string name, int maxCount): _acts(acts.size()), _ptr(0), _name(name),_MAX_COUNT(maxCount), _count(0){
+		auto& am =  ActionManager::Instance();
+		for(size_t i= 0; i < acts.size(); ++i){
+			_acts[i] = am.create(acts[i]);
+		}
+	}
+
+	Action& Business::current(){
+		if (loopEnd()){
+			return getNullAction();
+		}
+
+		return *this->_acts[_ptr];
+	}
+
 	void Business::Do(User& usr){
 		bool lastFinish = false;
 

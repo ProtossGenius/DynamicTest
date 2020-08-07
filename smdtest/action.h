@@ -104,10 +104,28 @@ namespace smdtest{
 			std::string statusJson() override{return "{}";}
 	);
 
+	dtaction(FinishAction,  
+		public:
+			FinishAction():Action(){setStatus(ActionStatus::Success); }
+		public:
+			void Do(User&)override{}
+			std::string desc() override{return "NullAction Desc";}
+			bool Filter(void*)override{return false;}
+			void Recive(User&, void*)override{}
+			void Disconnect(User&, const std::string&)override{}
+			std::string statusJson() override{return "{}";}
+	);
+
 	inline 
 	NullAction& getNullAction(){
 		static NullAction null;
 		return null;
+	}
+
+	inline 
+	FinishAction& getFinishAction(){
+		static FinishAction finish;
+		return finish;
 	}
 }
 

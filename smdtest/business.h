@@ -3,18 +3,13 @@
 #include <vector>
 #include <mutex>
 #include <memory>
-#include "action.h"
 
 namespace smdtest{
 	class User;
+	class Action;
 	class Business{
 		public:
-			Business(std::vector<std::string> acts, std::string name, int maxCount): _acts(acts.size()), _ptr(0), _name(name),_MAX_COUNT(maxCount), _count(0){
-				auto& am =  ActionManager::Instance();
-				for(size_t i= 0; i < acts.size(); ++i){
-					_acts[i] = am.create(acts[i]);
-				}
-			}
+			Business(std::vector<std::string> acts, std::string name, int maxCount);
 		public:
 			void Do(User& usr);
 			void Recive(User& usr, void* pkg);
@@ -35,13 +30,7 @@ namespace smdtest{
 			bool loopEnd(){
 				return _ptr == _acts.size();
 			}
-			Action& current(){
-				if (loopEnd()){
-					return getNullAction();
-				}
-
-				return *this->_acts[_ptr];
-			}
+			Action& current();
 		private:
 			std::vector<std::shared_ptr<Action> > _acts;
 			size_t _ptr;
