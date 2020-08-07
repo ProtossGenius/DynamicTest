@@ -71,5 +71,5 @@ Action::Do在得到结果前一直调用（如游戏中的战斗），那么你�
 <h2 id="about_tools"> 工具</h2>
 1. cmd/sdmtcact 
 一个工具用于统计目标目录下的Action，并通过自动代码生成实现自动注册（注意，Action必须在smdtest命名空间，且必须要使用dtaction宏，dtaction的使用
-可以参考[DEMO](./test/demo/README.md)
+可以参考 [DEMO](./test/demo/README.md) .
 
