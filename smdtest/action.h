@@ -20,6 +20,7 @@ namespace smdtest{
 	std::string to_string(ActionStatus as);
 	
 	class Action{
+		friend class Business;
 		public:
 			Action():_status(ActionStatus::Ready){}
 			virtual ~Action(){}
@@ -35,7 +36,7 @@ namespace smdtest{
 				return _err;
 			}
 		public:
-			ActionStatus getStatus(){return _status;}
+			virtual ActionStatus getStatus(){return _status;}
 			void clean(){_status = ActionStatus::Ready;_err = "";}
 		protected:
 			void setError(const std::string& err){

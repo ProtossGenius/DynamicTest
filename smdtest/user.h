@@ -21,16 +21,16 @@ namespace smdtest{
 			User(boost::asio::io_service& ioc, std::shared_ptr<Strategy> strategy);
 			virtual ~User(){if (this->_worker != nullptr){delete _worker;}}
 			void start();
-			bool isDeadLock(){
+			bool isInDeadLock(){
 				if(_deadLock)return true;
 				_deadLock = true;
 				return false;
 			}
 			bool isAlive(){return this->_alive;}
+			void onDisconnectWithLock(const std::string& sId);
 			void push(void* pkg);
-			void onDisconnect(const std::string& sId);
-			void setStrategy(std::shared_ptr<Strategy> ns){
-				smnet::SMLockMgr _(this->_tsafe);
+			void setStrategyWithLock(std::shared_ptr<Strategy> ns){
+				lockm _(this->_tsafe);
 				this->_strategy->getTicker()->close();
 				this->_strategy = ns;
 				start();
@@ -44,13 +44,13 @@ namespace smdtest{
 				return this->_getData(type, key);
 			}
 			//never call it in Action but should call it in another.
-			void* getDataByLock(const std::string& type, const std::string& key) {
+			void* getDataWithLock(const std::string& type, const std::string& key) {
 				lockm _(this->_tsafe);
 				return this->_getData(type, key);
 			}
 
 			//statusJson return User's status.
-			std::string statusJsonByLock() {
+			std::string statusJsonWithLock() {
 				lockm _(this->_tsafe);
 				return  this->_statusJson();
 			}
@@ -58,18 +58,16 @@ namespace smdtest{
 			virtual std::string uid() = 0;
 
 			//logData log data. (it always be call when be closed == Do loop end.).
-			void logDataByLock() {
-				smnet::SMLockMgr _(this->_tsafe);
+			void logDataWithLock() {
+				lockm _(this->_tsafe);
 				_logData();
 			}
 			//statusJson return User's status.
 			std::string statusJson() {
-				lockm _(this->_tsafe);
 				return  this->_statusJson();
 			}
 			//logData log data. (it always be call when be closed == Do loop end.).
 			void logData() {
-				smnet::SMLockMgr _(this->_tsafe);
 				_logData();
 			}
 			//anything should do when close User.
@@ -95,7 +93,6 @@ namespace smdtest{
 			virtual void* _getData(const std::string& type, const std::string& key) = 0;
 			virtual std::string _statusJson() = 0;
 			std::shared_ptr<Process> currentProcess(){
-				smnet::SMLockMgr _(this->_tsafe);
 				return this->_process;
 			}
 			

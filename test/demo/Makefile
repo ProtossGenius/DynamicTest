@@ -1,5 +1,5 @@
 
-actions.o: actions.cpp ./actions/login_action.h actions.h
+actions.o: actions.cpp ./actions/login_action.h ./actions/smdtest/action.h ./actions/smdtest/smncpp/lockm.h actions.h
 	g++ -Wall -c actions.cpp
 main.o: main.cpp ./actions.h ./actions/login_action.h ./actions/smdtest/action.h ./actions/smdtest/smncpp/lockm.h ./smdtest/action.h ./smdtest/business.h ./smdtest/process.h ./smdtest/smncpp/channel.h ./smdtest/smncpp/lockm.h ./smdtest/smncpp/ticker.h \
 ./smdtest/strategy.h ./smdtest/user.h MyUser.h my_strategy.h
@@ -21,7 +21,6 @@ sm_clean_o:
 
 ##Tail
 build:
-	smake
 	smdtcact
 	+make sm_build_all 
 

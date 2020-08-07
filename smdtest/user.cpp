@@ -17,7 +17,7 @@ namespace smdtest{
 		});
 	}
 	
-	void User::onDisconnect(const std::string& sId){
+	void User::onDisconnectWithLock(const std::string& sId){
 		lockm _(this->_tsafe);
 		this->_process->Disconnect(*this, sId);
 	}

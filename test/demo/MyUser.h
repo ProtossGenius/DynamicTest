@@ -32,7 +32,7 @@ namespace demo{
 			//return user's status.
 			std::string _statusJson() override{
 				return "{\"uid\":\"" + m_Uid + "\", \"process_status\":\"" + currentProcess()->statusJson() +
-					"\", \"is_in_dead_lock\":\"" + (isDeadLock() ? "true":"false")+ "\"}";
+					"\", \"is_in_dead_lock\":\"" + (isInDeadLock() ? "true":"false")+ "\"}";
 			}
 			//get all of the data for analysis.
 			void _logData() override{

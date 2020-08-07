@@ -28,6 +28,11 @@ namespace smdtest{
 			auto& cur = current();
 			switch(cur.getStatus()){
 				case ActionStatus::Ready:
+					cur.Do(usr);
+					if(cur.getStatus() == ActionStatus::Ready){
+						cur.setStatus(ActionStatus::WaitResult);
+					}
+					break;
 				case ActionStatus::Doing:
 					cur.Do(usr);
 					break;

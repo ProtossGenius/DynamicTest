@@ -31,3 +31,6 @@ clean: sm_clean_o
 	+make -C test clean
 zero:
 
+init:
+	smake
+
