@@ -1,5 +1,4 @@
 
-
 sm_build: 
 	+make -C cmd sm_build
 	+make -C docs sm_build
