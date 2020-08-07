@@ -36,7 +36,7 @@ Process的设计目的在于流程的检测——用于回归测试，最基础�
 Dtest的核心代码在[./smdtest]中，第三方库包括boost（的异步）和smn-cpp（使用了其Ticker、LockManager等）.
 demo代码位于./test/demo，它实现了一个简单的策略——直到在Action::Do返回Success前一直返回login\_action，返回Success后关闭User。DTest基础的用法基本上在里面都有展现。
 
- * Windows
+   * Windows
 
 这个项目是在linux下用vim开发的，没有用经典的cmake来管理项目，这意味着很难一键在windows下搭建，下面会提供手动配置的过程。
 boost的配置请参考网络。smn-cpp的配置
@@ -44,7 +44,8 @@ boost的配置请参考网络。smn-cpp的配置
 2. 将smn-cpp/smncpp添加到VisutalStudio的include配置中。
 3. 编译运行
 
-* Linux
+   * Linux
+
 如果不希望安装go和smake的话可以参考上述步骤手动配置运行，通过软链接确保编译通过即可。
 在已经安装了go（最好配置一下goproxy以防止某些库下载不下来）的情况下直接运行make init即可。
 
