@@ -65,8 +65,21 @@ Action中的方法不应该因为任何因素而阻塞。在Action或者Strategy
 Action::Do在得到结果前一直调用（如游戏中的战斗），那么你需要在Action::Do中将状态置为ActionStatus::Going;
 5. User没有提供无锁版本的setStrategy方法，原因是Action中不应该修改User的Strategy，而Strategy可以很轻易的改变自身的行为，无论是用impl手法还是使用策略模式，它没有必要
 通过改变User的当前的Strategy来更改User的行为策略。所有的WithLock函数都是提供给开发者在其他线程中使用的。
-6. 总是应该通过User的friend模板方法来获得User的Data，由于User::getData返回的是一个void\*，它太容易导致内存泄漏了，不论是忘记删除还是重复删除。（因此getData和getDataWithLock
-也被设置为私有的）其friend模板方法会强迫你选择是通过shared\_pointer还是一个引用来取用数据。
+6. User现在提供了模板成员方法以直接选择使用shared\_ptr或者引用来管理资源，当你的自定义User是使用shared\_ptr来管理资源的时候，建议是返回一个通过new创建的shared\_ptr的副本
+（以尽可能减少拷贝的花费），通过getSharedData方法获得值之后通过强制类型转换转换成原有的shared\_ptr，下面会包含示例代码。smn-cpp或许会针对这种情况特别设计一种计数型的智能指针。
+```
+//在自定义的User中
+void *_getData(type, key){
+	shared_ptr<Type> it = getYourData(type, key);
+	return new shared_ptr<Type>(it);//这样的拷贝和资源成本非常低。
+}
+
+//在使用的时候
+void anything(User& usr){
+	auto ptr = usr.getSharedData<shared_ptr<Type> >(...);
+	auto val = *ptr;//直接auto val = *usr.getSharedData...是不行的，或许会导致野指针。
+}
+```
 
 <h2 id="about_tools"> 工具</h2>
 1. cmd/sdmtcact 

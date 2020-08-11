@@ -73,15 +73,26 @@ namespace smdtest{
 			std::shared_ptr<Process> currentProcess(){
 				return this->_process;
 			}
-		private:
+		public:
+			template<typename DataType>
+			std::shared_ptr<DataType> getSharedData(const std::string& type, const std::string &key){
+				return std::shared_ptr<DataType>((DataType*)this->_getData(type, key));
+			}
+			template<typename DataType>
+			std::shared_ptr<DataType> getSharedDataWithLock(const std::string& type, const std::string &key){
+				lockm _(this->_tsafe);
+				return getSharedData<DataType>(type, key);
+			}
 			//getData return value's pointer. usually should not new create data or you must remember free it..
-			void* getData(const std::string& type, const std::string& key){
-				return this->_getData(type, key);
+			template<typename DataType>
+			const DataType& getDataRef(const std::string& type, const std::string& key){
+				return *(DataType*)this->_getData(type, key);
 			}
 			//never call it in Action but should call it in another.
-			void* getDataWithLock(const std::string& type, const std::string& key) {
+			template<typename DataType>
+			const DataType& getDataRefWithLock(const std::string& type, const std::string& key) {
 				lockm _(this->_tsafe);
-				return this->_getData(type, key);
+				return getDataRef<DataType>(type, key);
 			}
 		private:
 			void close();
@@ -101,36 +112,13 @@ namespace smdtest{
 			void* _pkg;
 		private:
 			template<typename DataType>
-			friend	const std::shared_ptr<DataType> getSharedData (User& usr, const std::string& type, const std::string& key);
-			template<typename DataType>
 			friend const DataType& getRefData(User& usr, const std::string& type, const std::string& key);
-			template<typename DataType>
-			friend	const std::shared_ptr<DataType> getSharedDataWithLock (User& usr, const std::string& type, const std::string& key);
 			template<typename DataType>
 			friend const DataType& getRefDataWithLock(User& usr, const std::string& type, const std::string& key);
 			friend class Strategy;
 
 	};
 	
-	template<typename DataType>
-	const std::shared_ptr<DataType> getSharedData(User& usr, const std::string& type, const std::string& key){
-		return std::shared_ptr<DataType>((DataType*)usr.getData(type, key));
-	}
-	
-	template<typename DataType>
-	const DataType& getRefData(User& usr, const std::string& type, const std::string& key){
-		return *(DataType*)usr.getData(type, key);
-	}
-	template<typename DataType>
-	const std::shared_ptr<DataType> getSharedDataWithLock(User& usr, const std::string& type, const std::string& key){
-		return std::shared_ptr<DataType>((DataType*)usr.getDataWithLock(type, key));
-	}
-	
-	template<typename DataType>
-	const DataType& getRefDataWithLock(User& usr, const std::string& type, const std::string& key){
-		return *(DataType*)usr.getDataWithLock(type, key);
-	}
-
 }
 
 #endif /* end of include guard: USER_H_UV8CBAVZ */
