@@ -9,7 +9,7 @@ namespace smdtest{
 	class Action;
 	class Business{
 		public:
-			Business(std::vector<std::string> acts, std::string name, int maxCount);
+			Business(std::vector<std::string> acts, std::string name, int maxCount = 1);
 		public:
 			void Do(User& usr);
 			void Recive(User& usr, void* pkg);
@@ -19,7 +19,7 @@ namespace smdtest{
 			std::string error(){return _err;}
 			
 			bool finish(){
-				return loopEnd() && _count == _MAX_COUNT;
+				return onceLoopEnd() && _count == _MAX_COUNT;
 			}
 			void clean(){
 				_ptr = 0;
@@ -27,7 +27,7 @@ namespace smdtest{
 				_err = "";
 			}
 		private:
-			bool loopEnd(){
+			bool onceLoopEnd(){
 				return _ptr == _acts.size();
 			}
 			Action& current();

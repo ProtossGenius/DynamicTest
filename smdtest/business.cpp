@@ -13,7 +13,7 @@ namespace smdtest{
 	}
 
 	Action& Business::current(){
-		if (loopEnd()){
+		if (onceLoopEnd()){
 			return getNullAction();
 		}
 
@@ -25,7 +25,7 @@ namespace smdtest{
 
 		do {
 			lastFinish = false;
-			if(loopEnd()){
+			if(onceLoopEnd()){
 				if(_err.size() != 0){
 					this->_count = _MAX_COUNT;
 					return;
