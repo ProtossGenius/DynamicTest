@@ -58,8 +58,8 @@ namespace smdtest{
 					cur.Wait(usr);
 					break;
 				case ActionStatus::Fail:
-					cur.clean();
 					_err = cur.error();
+					cur.clean();
 					//set finish
 					_ptr = _acts.size();
 					break;
