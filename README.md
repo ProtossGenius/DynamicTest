@@ -70,6 +70,7 @@ Action::Do在得到结果前一直调用（如游戏中的战斗），那么你�
 通过改变User的当前的Strategy来更改User的行为策略。所有的WithLock函数都是提供给开发者在其他线程中使用的。
 6. User现在提供了模板成员方法以直接选择使用shared\_ptr或者引用来管理资源，当你的自定义User是使用shared\_ptr来管理资源的时候，建议是返回一个通过new创建的shared\_ptr的副本
 （以尽可能减少拷贝的花费），通过getSharedData方法获得值之后通过强制类型转换转换成原有的shared\_ptr，下面会包含示例代码。smn-cpp或许会针对这种情况特别设计一种计数型的智能指针。
+7. 现在Action增加了虚方法Wait，在进入了ActionStatus::WaitResult之后，每次检测帧都会调用Action::Wait，超时相关的检测代码应该放到这里。
 ```
 //在自定义的User中
 void *_getData(type, key){

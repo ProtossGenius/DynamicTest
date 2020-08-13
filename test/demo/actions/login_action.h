@@ -9,6 +9,7 @@ namespace smdtest{
 		//send a sync message to user's chan.
 		void Do(User &usr) override;
 		void Disconnect(User &usr, const std::string &name) override{}
+		void Wait(User &usr) override{}
 		bool Filter(void *pkg) override{
 			return  true;
 		}

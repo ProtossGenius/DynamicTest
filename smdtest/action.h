@@ -26,6 +26,7 @@ namespace smdtest{
 			virtual ~Action(){}
 		public:
 			virtual void Do(User& usr) = 0;
+			virtual void Wait(User& usr) = 0;
 			virtual bool Filter(void* pkg) = 0;
 			virtual void Recive(User& usr, void* pkg) = 0;
 			virtual void Disconnect(User& usr, const std::string& name) = 0;
@@ -97,6 +98,7 @@ namespace smdtest{
 			NullAction():Action(){setStatus(ActionStatus::Fail); setError("NullAction");}
 		public:
 			void Do(User&)override{}
+			void Wait(User&) override{}
 			std::string desc() override{return "NullAction Desc";}
 			bool Filter(void*)override{return false;}
 			void Recive(User&, void*)override{}
@@ -109,6 +111,7 @@ namespace smdtest{
 			FinishAction():Action(){setStatus(ActionStatus::Success); }
 		public:
 			void Do(User&)override{}
+			void Wait(User &usr) override{}
 			std::string desc() override{return "NullAction Desc";}
 			bool Filter(void*)override{return false;}
 			void Recive(User&, void*)override{}

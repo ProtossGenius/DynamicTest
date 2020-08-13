@@ -55,6 +55,7 @@ namespace smdtest{
 					cur.Do(usr);
 					break;
 				case ActionStatus::WaitResult:
+					cur.Wait(usr);
 					break;
 				case ActionStatus::Fail:
 					cur.clean();
