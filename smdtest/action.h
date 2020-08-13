@@ -105,7 +105,7 @@ namespace smdtest{
 			void Disconnect(User&, const std::string&)override{}
 			std::string statusJson() override{return "{}";}
 	);
-
+	extern const std::string NameNullAction;
 	dtaction(FinishAction,  
 		public:
 			FinishAction():Action(){setStatus(ActionStatus::Success); }
@@ -118,7 +118,7 @@ namespace smdtest{
 			void Disconnect(User&, const std::string&)override{}
 			std::string statusJson() override{return "{}";}
 	);
-
+	extern const std::string NameFinishAction;
 	inline 
 	NullAction& getNullAction(){
 		static NullAction null;

@@ -1,5 +1,5 @@
 #include "action.h"
-
+#include "smncpp/assert.h"
 namespace smdtest{
 
 	std::string to_string(ActionStatus as){
@@ -15,6 +15,7 @@ namespace smdtest{
 			case ActionStatus::WaitResult:
 				return "ActionStatus::WaitResult";
 		}
+		_assert(false);
 		return "Unknown";
 	}
 	
@@ -27,4 +28,7 @@ namespace smdtest{
 
 		return	this->create("NullAction");
 	}
+
+	const std::string NameNullAction(NullAction::Name());
+	const std::string NameFinishAction(NullAction::Name());
 }
