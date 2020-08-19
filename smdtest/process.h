@@ -17,10 +17,7 @@ namespace smdtest{
 			bool finish(){
 				return _ptr == _busis.size();
 			}
-			void clean(){
-				_ptr = 0;
-				_err = "";
-			}
+			void clean();
 		public:	//unsafe
 			std::vector<Business>& getBussnessVector(){return this->_busis;}
 		private:

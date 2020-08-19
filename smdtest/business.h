@@ -21,11 +21,7 @@ namespace smdtest{
 			bool finish(){
 				return onceLoopEnd() && _count == _MAX_COUNT;
 			}
-			void clean(){
-				_ptr = 0;
-				_count = 0;
-				_err = "";
-			}
+			void clean();
 		private:
 			bool onceLoopEnd(){
 				return _ptr == _acts.size();

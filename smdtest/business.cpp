@@ -19,6 +19,15 @@ namespace smdtest{
 
 		return *this->_acts[_ptr];
 	}
+	
+	void Business::clean(){
+		_ptr = 0;
+		_count = 0;
+		_err = "";
+		for (auto& it : this->_acts){
+			it->clean();
+		}
+	}
 
 	void Business::Do(User& usr){
 		bool lastFinish = false;

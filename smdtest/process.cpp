@@ -24,6 +24,14 @@ namespace smdtest{
 		}while(lastFinish);
 	}
 
+	void Process::clean(){
+		_ptr = 0;
+		_err = "";
+		for(auto& it : this->_busis){
+			it.clean();
+		}
+	}
+
 	void Process::Recive(User& usr, void* pkg){
 		if(finish()){
 			return;
