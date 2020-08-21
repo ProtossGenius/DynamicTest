@@ -75,6 +75,7 @@ namespace smdtest{
 				case ActionStatus::Success:
 					cur.clean();
 					++_ptr;
+					current().setStatus(ActionStatus::Ready);
 					lastFinish = true;
 					break;
 			}

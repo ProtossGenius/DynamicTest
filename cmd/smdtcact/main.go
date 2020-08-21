@@ -28,6 +28,10 @@ func cpath(p string) string {
 }
 
 func main() {
+	var defName string = "dtaction"
+
+	flag.StringVar(&defName, "dname", defName, "#define 's name")
+
 	actions := sort.StringSlice{}
 	pathList := []string{}
 	target := flag.String("target", "./actions", "action dir.")
@@ -68,7 +72,7 @@ func main() {
 		for _, line := range strings.Split(code, "\n") {
 			line = strings.TrimSpace(line)
 
-			if strings.HasPrefix(line, "dtaction") && strings.Contains(line, ",") && strings.Contains(line, "(") &&
+			if strings.HasPrefix(line, defName) && strings.Contains(line, ",") && strings.Contains(line, "(") &&
 				strings.Index(line, "(") < strings.Index(line, ",") {
 				actionName := strings.TrimSpace(line[strings.Index(line, "(")+1 : strings.Index(line, ",")])
 				actions = append(actions, actionName)

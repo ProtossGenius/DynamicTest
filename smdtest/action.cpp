@@ -2,6 +2,17 @@
 #include "smncpp/assert.h"
 namespace smdtest{
 
+	void Action::setStatus(ActionStatus status){
+		if(actionFinish(status)){
+			_endTime = clock();
+			finishDo();
+		}
+		if(status == ActionStatus::Ready){
+			_startTime = clock();
+		}
+		this->_status = status;
+	}
+
 	std::string to_string(ActionStatus as){
 		switch(as){
 			case ActionStatus::Ready:

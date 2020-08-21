@@ -5,7 +5,7 @@
 #include <mutex>
 #include <memory>
 #include <string>
-
+#include <ctime>
 #include "smncpp/lockm.h"
 namespace smdtest{
 	class User;
@@ -16,6 +16,11 @@ namespace smdtest{
 		Success,
 		Fail 
 	};
+	
+	inline 
+	bool actionFinish(ActionStatus as){
+		return ActionStatus::Success == as || ActionStatus::Fail == as;
+	}
 
 	std::string to_string(ActionStatus as);
 	
@@ -38,18 +43,23 @@ namespace smdtest{
 			}
 		public:
 			virtual ActionStatus getStatus(){return _status;}
-			void clean(){_status = ActionStatus::Ready;_err = "";}
+			void clean(){_status = ActionStatus::Ready;_err = ""; _startTime = _endTime = 0;}
 		protected:
 			void setError(const std::string& err){
 				_status = ActionStatus::Fail;
 				_err = err;
 			}
-			void setStatus(ActionStatus status){
-				this->_status = status;
+			void setStatus(ActionStatus status);
+
+			clock_t useTime(){
+				return double(_endTime - _startTime) / CLOCKS_PER_SEC;
 			}
+			virtual void finishDo(){}
 		private:
 			ActionStatus _status;
 			std::string _err;
+			clock_t _startTime;
+			clock_t _endTime;
 	};
 
 	class ActionManager{
