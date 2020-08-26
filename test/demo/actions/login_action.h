@@ -14,9 +14,6 @@ namespace smdtest{
 			return  true;
 		}
 		void Recive(User &usr, void *pkg) override;
-		std::string statusJson() override{
-			return "{\"name\":\"" + name() +"\",\"status\":\"" + to_string(getStatus()) + "\"}";
-		}
 		std::string desc() override{
 			return "Demo Login Action";
 		}

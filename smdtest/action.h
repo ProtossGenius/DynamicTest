@@ -23,7 +23,6 @@ namespace smdtest{
 	}
 
 	std::string to_string(ActionStatus as);
-	
 	class Action{
 		friend class Business;
 		public:
@@ -35,7 +34,7 @@ namespace smdtest{
 			virtual bool Filter(void* pkg) = 0;
 			virtual void Recive(User& usr, void* pkg) = 0;
 			virtual void Disconnect(User& usr, const std::string& name) = 0;
-			virtual std::string statusJson() = 0;
+			virtual std::string statusJson() ;	
 			virtual std::string name() = 0;
 			virtual std::string desc() = 0;
 			std::string error(){

@@ -30,6 +30,23 @@ namespace smdtest{
 		return "Unknown";
 	}
 	
+	void strReplaceAll(std::string& str, const std::string& src, const std::string& dest){
+		using std::string;
+		string::size_type pos = 0, srcLen = src.size(), destLen = dest.size();
+		pos = str.find(src, pos);
+		while(pos != string::npos){
+			str.replace(pos, srcLen, dest);
+			pos = str.find(src, pos + destLen);
+		}
+	}
+
+	std::string Action::statusJson(){
+		std::string err = this->_err;
+		strReplaceAll(err, "\\", "\\\\");
+		strReplaceAll(err, "\"", "\\\"");
+		return "{\"name\":\"" + name() +"\",\"status\":\"" + to_string(getStatus()) + "\", \"error\":\"" + err + "\"}";
+	}
+
 	std::shared_ptr<Action> ActionManager::create(const std::string& name){
 		smnet::SMLockMgr _(this->_tsafe);
 		auto iter = this->_CrtrMap.find(name);
