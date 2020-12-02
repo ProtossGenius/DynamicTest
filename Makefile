@@ -12,7 +12,7 @@ sm_build_all:
 	+make -C test sm_build_all
 
 sm_clean_o:
-	rm -rf ./*.o
+	rm -rf ./*.o ./run.main
 	+make -C cmd sm_clean_o
 	+make -C docs sm_clean_o
 	+make -C smdtest sm_clean_o
@@ -34,4 +34,5 @@ zero:
 init:
 	go get -u github.com/ProtossGenius/smntools/cmd/smake
 	smake
+	smcfg -install libs/boost
 

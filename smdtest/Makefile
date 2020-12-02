@@ -1,5 +1,5 @@
 
-action.o: action.cpp ./smncpp/lockm.h action.h
+action.o: action.cpp ./smncpp/lockm.h action.h smncpp/assert.h
 	g++ -Wall -c action.cpp
 business.o: business.cpp action.h business.h smncpp/lockm.h
 	g++ -Wall -c business.cpp
@@ -16,7 +16,7 @@ sm_build_all: action.o business.o process.o strategy.o user.o
 	+make -C smncpp sm_build_all
 
 sm_clean_o:
-	rm -rf ./*.o
+	rm -rf ./*.o ./run.main
 
 
 ##Tail

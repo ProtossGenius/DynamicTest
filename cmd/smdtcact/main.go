@@ -78,6 +78,7 @@ func main() {
 				actions = append(actions, actionName)
 			}
 		}
+
 		return smn_file.FILE_DO_FUNC_RESULT_DEFAULT
 	})
 	check(err)
@@ -91,12 +92,11 @@ func main() {
 	defer hwritef(`#endif /* end of include guard: ACTIONS_H_TV3HQ2CU */`)
 
 	hwritef("#include <string>")
+	cwritef(`#include "actions.h"`)
 
 	for _, h := range pathList {
-		hwritef(`#include "%s"`, h)
+		cwritef(`#include "%s"`, h)
 	}
-
-	cwritef(`#include "actions.h"`)
 
 	hwritef("namespace smdtest{")
 	cwritef("namespace smdtest{")

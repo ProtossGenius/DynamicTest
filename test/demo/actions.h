@@ -3,7 +3,6 @@
 //Product by github.com/ProtossGenius/DynamicTest/cmd/smdtcact, should not change it.
 
 #include <string>
-#include "actions/login_action.h"
 namespace smdtest{
 	extern const std::string NameLoginAction;
 } //smdtest

@@ -6,7 +6,7 @@ sm_build_all:
 	+make -C demo sm_build_all
 
 sm_clean_o:
-	rm -rf ./*.o
+	rm -rf ./*.o ./run.main
 	+make -C demo sm_clean_o
 
 ##Tail
