@@ -27,12 +27,13 @@ test: zero
 	cd test && make test -j8
 install:
 	cd ./cmd/smdtcact && go install # SureMoon Dyn..Test Collct Actions
+	smdcatalog # product docs
 clean: sm_clean_o
 	+make -C test clean
 zero:
 
 init:
 	go get -u github.com/ProtossGenius/smntools/cmd/smake
-	smake
 	smcfg -install libs/boost
+	smake
 
