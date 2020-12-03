@@ -5,7 +5,7 @@
 [<<< upper page](../README.md)
 ---
 * [\<file>DynamicTestDo.md -> DynamicTest的事件驱动流程](./DynamicTestDo.md)
-* [\<file>Glossary.md -> ./docs/Glossary.md](./Glossary.md)
+* [\<file>Glossary.md -> 术语表](./Glossary.md)
 
 # SubCatalog
 
