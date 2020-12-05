@@ -58,7 +58,8 @@ namespace smdtest{
 	}
 
 	void User::Recive(void* pkg){
-		this->_process->Recive(*this, pkg);
 		this->recivePkg(pkg);
+		this->_process->Recive(*this, pkg);
+		this->freePkg(pkg);
 	}
 }

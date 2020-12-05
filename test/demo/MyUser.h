@@ -11,14 +11,13 @@ namespace demo{
 		public:
 			MyUser(boost::asio::io_service& ioc, std::shared_ptr<smdtest::Strategy> strategy, const std::string& uuid):smdtest::User(ioc, strategy),m_Uid(uuid){}
 		private:
-			//you should recive pkg & change user's data & free resource(if need)
+			//you should recive pkg & change user's data
 			void recivePkg(void* pkg) override{
 				auto pStr = (std::string*) pkg;
 				std::cout << *pStr << std::endl;
 				//change data.
 				_aMap[*pStr]	 = *pStr;
-				//free resource.
-				delete pStr;
+				// 注意,不应该在此处释放资源
 			}
 			//you should let your use have an unique id.
 			std::string uid()override{return m_Uid;}
@@ -39,6 +38,9 @@ namespace demo{
 				for(auto it : _aMap){
 					std::cout << it.first << " : " << it.second <<std::endl;
 				}
+			}
+			void freePkg(void *pkg) override{
+				delete (std::string*)pkg;
 			}
 		private:
 			std::string m_Uid;

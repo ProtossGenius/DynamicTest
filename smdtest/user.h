@@ -48,7 +48,7 @@ namespace smdtest{
 
 			virtual std::string uid() = 0;
 
-			//logData log data. (it always be call when be closed == Do loop end.).
+			// logDataWithLock 输出User数据.
 			void logDataWithLock() {
 				lockm _(this->_tsafe);
 				_logData();
@@ -57,15 +57,16 @@ namespace smdtest{
 			std::string statusJson() {
 				return  this->_statusJson();
 			}
-			//logData log data. (it always be call when be closed == Do loop end.).
+			//logData log data. 
 			void logData() {
 				_logData();
 			}
 		protected:
-			//deal with the package . and update user's data(action should not change user's data).
-			//if pkg need free, should free in here. 
+			//recivePkg 处理数据包， 更新数据始终应该在这里进行.
 			virtual void recivePkg(void* pkg) = 0;
-			//you should free resource here, such as sessions.
+			// freePkg if pkg need free, should free in here. 
+			virtual void freePkg(void *pkg) = 0;
+			// _close 关闭时需要做到事情.
 			virtual void _close() {}
 			virtual void _logData() = 0;
 			virtual void* _getData(const std::string& type, const std::string& key) = 0;
@@ -73,7 +74,8 @@ namespace smdtest{
 			std::shared_ptr<Process> currentProcess(){
 				return this->_process;
 			}
-		public:
+		public: // 获得数据
+			
 			template<typename DataType>
 			std::shared_ptr<DataType> getSharedData(const std::string& type, const std::string &key){
 				return std::shared_ptr<DataType>((DataType*)this->_getData(type, key));
@@ -88,7 +90,7 @@ namespace smdtest{
 			const DataType& getDataRef(const std::string& type, const std::string& key){
 				return *(DataType*)this->_getData(type, key);
 			}
-			//never call it in Action but should call it in another.
+			
 			template<typename DataType>
 			const DataType& getDataRefWithLock(const std::string& type, const std::string& key) {
 				lockm _(this->_tsafe);
@@ -96,6 +98,11 @@ namespace smdtest{
 			}
 		private:
 			void close();
+			/* Recive 
+			 * 1. 首先根据用户包更新User数据,
+			 * 2. 之后传递给当前Action进行处理.
+			 * 3. 释放数据包(回收)
+			 * */
 			void Recive(void* pkg);
 			void doAction();
 			void dealPkg();
