@@ -1,5 +1,5 @@
 
-action.o: action.cpp ./smncpp/lockm.h action.h smncpp/assert.h
+action.o: action.cpp ./smncpp/lockm.h action.h
 	g++ -Wall -c action.cpp
 business.o: business.cpp action.h business.h smncpp/lockm.h
 	g++ -Wall -c business.cpp
